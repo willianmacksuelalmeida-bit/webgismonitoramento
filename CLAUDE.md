@@ -1,4 +1,4 @@
-# WebGIS — Monitoramento Sísmico de Alagoas
+# LAMSIS-AL — WebGIS de Monitoramento Sismológico de Alagoas
 
 > **Como usar este arquivo:** coloque-o na raiz do repositório do projeto. O Claude Code o lê automaticamente em toda sessão e usará estas instruções como contexto permanente do projeto.
 
@@ -48,7 +48,7 @@ webgis-sismico-al/
 | 3 | Base — Relevo | tiles Esri World Shaded Relief (`maxNativeZoom:13`, ampliar tiles além disso) | padrão | rádio no menu |
 | 4 | Estados do Nordeste | `data/estados_nordeste.geojson` | contorno preto `#111111` 1.8px, preenchimento 3% | tooltip `NM_UF (SIGLA)`; hover teal |
 | 5 | Municípios de Alagoas | `data/municipios_alagoas.geojson` | contorno preto `#111111` 0.8px | tooltip `NM_MUN`; hover teal |
-| 6 | Estações sismográficas | `data/estacoes.geojson` | triângulo teal `#3BC7CB` | popup: código, localização, rede, coordenadas |
+| 6 | Estações sismográficas | `data/estacoes.geojson` | triângulo SVG preto `#0E0E0E` com contorno branco 1.9px (destaca em qualquer mapa base) | popup: código, localização, rede, coordenadas |
 | 7 | Epicentros | `data/epicentros.geojson` | círculo, raio `4 + magnitude*2.2` (nula → 5), cor pela rampa (nula → cinza `#6E7F90`) | popup: chip com `mag_txt`, classe, data pt-BR + hora UTC, cidade–UF, coordenadas, fonte; alvo dos filtros |
 
 **Empilhamento (baixo → cima):** base → estados → municípios → estações → epicentros, via `map.createPane()` com zIndex crescente.
@@ -113,12 +113,13 @@ export const FIELDS = {
 1. Filtro por **cidade**: select "Todas as cidades" + 62 opções em ordem alfabética pt-BR, derivadas dos dados.
 2. Magnitude mínima (slider 0–4, passo 0,1). Regra para indeterminadas: com o slider em 0, todos os eventos aparecem; acima de 0, eventos com `magnitude = null` são ocultados.
 3. Período por ano inicial/final (derivar `anoMin`/`anoMax` dos dados; hoje 2018–2026).
-4. Painel-resumo: contagem de eventos visíveis + maior magnitude visível (ignorando nulas). Os três filtros combinam entre si.
+4. Painel-resumo (4 KPIs): eventos visíveis, maior magnitude (ignorando nulas), "cidades com registro sísmico" e período com anos completos (`2018–2026`). Os três filtros combinam entre si.
 
 **Fase 3 — Implementado no protótipo**
-1. **Exportação** dos epicentros filtrados em CSV (`;`, BOM UTF-8, cabeçalho em português) e GeoJSON, com nome de arquivo carimbado pelos filtros (`epicentros_lames_craibas_2024-2024.csv`). Botões desabilitam quando não há resultado.
-2. **Gráfico de eventos por ano** em SVG puro (sem dependência), clicável.
-3. **Enquadramento "Filtrados"**: `flyToBounds` sobre os eventos visíveis (`maxZoom:12`).
+1. **Gráfico de eventos por ano** em SVG puro (sem dependência), clicável.
+2. **Enquadramento**: botões Alagoas e Nordeste (`flyToBounds`). O botão "Filtrados" foi implementado e **removido a pedido do autor**.
+
+> A exportação de dados (CSV/GeoJSON) chegou a ser implementada e foi **removida a pedido do autor** — o site é apenas de consulta. Não reintroduzir sem pedido explícito.
 
 **Fase 4 — Desejável (validar antes)**
 - Estado dos filtros na URL (permite compartilhar recortes); export PNG do mapa; busca digitável no select de cidades; camada de calor (heatmap) para densidade.
@@ -128,21 +129,20 @@ export const FIELDS = {
 
 Referência visual: `prototipo-monitoramento-sismico.html`. O padrão adotado é **Data-Dense Dashboard / Real-Time Monitoring** em tema escuro (derivado da skill `ui-ux-pro-max`), com densidade alta e hierarquia clara.
 
-**Layout.** Painel lateral esquerdo de 340px (310px ≤1180px; gaveta deslizante ≤900px com scrim, botão de fechar e tecla Esc). Ordem das seções: Marca → Resumo (KPIs + gráfico) → Filtros → Camadas → Mapa base + Enquadramento → Legenda → Exportar → Desenvolvimento e fontes (`<details>` recolhível).
+**Layout.** Painel lateral esquerdo de 340px (310px ≤1180px; gaveta deslizante ≤900px com scrim, botão de fechar e tecla Esc). Ordem das seções: Marca → **Mapa base + Enquadramento** → Resumo (KPIs + gráfico) → Filtros → Camadas → Legenda → Desenvolvimento e fontes (seção fixa, sempre visível — não usar `<details>`).
 
-**Marca.** Cabeçalho fixo (`position:sticky`), centralizado: eyebrow "WebGIS · Monitoramento Sísmico", sigla **LAMES** em Chakra Petch 29px, nome completo abaixo, e sismograma com pulso de luz âmbar contínuo (dasharray `70 570`, 3,2s linear infinito).
+**Marca.** Cabeçalho fixo (`position:sticky`), centralizado: eyebrow "Monitoramento Sísmico"; sigla **LAMSIS - AL** em Chakra Petch 28px, toda em `--text` (sem cor de destaque no sufixo); nome completo "Laboratório de Monitoramento Sismológico de Alagoas" logo abaixo em 11,5px peso 500 na mesma cor do título (`--text`, não `--muted`), obrigatoriamente **em uma única linha** (`white-space:nowrap`; 10,5px ≤420px). O tamanho foi calibrado medindo a largura real do texto em Archivo — 12px estoura o painel de 340px; e sismograma com pulso de luz âmbar contínuo (dasharray `70 570`, 3,2s linear infinito).
 
 **Tokens.** Superfícies `#0B121A` / `#101B26` / `#16222F` / `#1B2938`; linhas `#243447` / `#2E4257`; texto `#E9EEF4` / `#9DB0C2` / `#74889C`; acento teal `#3BC7CB` (`#1F6E71` para estado ativo). Magnitude: `#EFC94C` · `#F08A24` · `#E14E2A` · `#D93646` · indeterminada `#7C8D9E`. Tipografia: Chakra Petch (títulos), Archivo (interface), IBM Plex Mono (números). Transições 180ms.
 
 **Acessibilidade (verificada).** Todas as combinações de texto ≥4,5:1 e elementos gráficos ≥3:1. Os valores originais `#B3202E` (2,43:1) e `#6E7F90` (3,91:1) **falhavam** e foram substituídos por `#D93646` e `#7C8D9E`. O chip de magnitude troca para texto branco quando M ≥ 4,0. Demais requisitos: `:focus-visible` teal em todos os controles, ícones em SVG (nunca emoji), `aria-pressed` nos segmented controls, `aria-live="polite"` nos KPIs, `role="status"` no aviso de resultado vazio, `role="alert"` no erro de carregamento, `prefers-reduced-motion` desliga todas as animações, e nenhuma informação transmitida só por cor (magnitude tem cor + tamanho + rótulo textual).
 
-**Componentes próprios.** KPIs em grade 2×2; minigráfico de barras SVG por ano (clicável — define o período; barras fora do período ficam esmaecidas); segmented controls para mapa base e enquadramento; linhas de camada com contagem; swatch de linha para camadas de limite e de cor para pontos; botão "Limpar" que só aparece com filtro ativo; leitura de coordenadas + zoom no canto do mapa; overlay de carregamento com spinner; aviso flutuante quando o filtro não retorna eventos.
+**Componentes próprios.** KPIs em grade 2×2 com conteúdo centralizado (flex column, `text-align:center`); minigráfico de barras SVG por ano (clicável — define o período; barras fora do período ficam esmaecidas); segmented controls para mapa base e enquadramento; linhas de camada com contagem; swatch de linha para camadas de limite e de cor para pontos; botão "Limpar" que só aparece com filtro ativo; leitura de coordenadas + zoom no canto do mapa; overlay de carregamento com spinner; aviso flutuante quando o filtro não retorna eventos.
 
 ## 8. Critérios de aceite
 
 - As 3 bases alternam corretamente e as 4 camadas temáticas carregam de `data/` sem erro no console; nenhum popup exibe `undefined`.
 - Filtros de cidade, magnitude e período funcionam em conjunto e atualizam os KPIs e o gráfico (550 eventos / 62 cidades / máx. 2,7 com filtros zerados).
-- Exportações CSV e GeoJSON baixam apenas os eventos visíveis e abrem corretamente no QGIS e no Excel.
 - Contraste ≥4,5:1 (texto) e ≥3:1 (gráficos); navegação completa por teclado com foco visível; `prefers-reduced-motion` respeitado.
 - Testado em 1440px, 768px e 390px: painel vira gaveta ≤900px, com botão de fechar, scrim e Esc.
 - Tooltips mostram os 102 municípios e as 9 UFs pelo nome.

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LAMES — Monitoramento Sísmico de Alagoas</title>
+<title>LAMSIS-AL — Monitoramento Sismológico de Alagoas</title>
 <meta name="description" content="WebGIS de monitoramento sísmico de Alagoas: epicentros, estações sismográficas e malhas territoriais.">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -71,10 +71,11 @@
   #closeBtn:hover{color:var(--text);border-color:var(--teal)}
   #closeBtn svg{display:block;margin:auto}
   .brand h1{
-    font-family:var(--font-display);font-weight:700;font-size:29px;
-    line-height:1;letter-spacing:.07em;text-transform:uppercase;
+    font-family:var(--font-display);font-weight:700;font-size:28px;
+    line-height:1;letter-spacing:.05em;text-transform:uppercase;
   }
-  .brand-full{font-size:10.5px;line-height:1.4;color:var(--muted);margin-top:6px}
+  .brand h1 .uf{margin-left:10px}
+  .brand-full{font-size:11.5px;font-weight:500;line-height:1.4;color:var(--text);margin-top:7px;white-space:nowrap}
   .seismo{display:block;width:100%;height:30px;margin-top:8px}
   .seismo .base{stroke:#2B3D52;stroke-width:1.2;fill:none}
   .seismo .spike{stroke:var(--m2);stroke-width:1.8;fill:none;stroke-linejoin:round;stroke-linecap:round;opacity:.4}
@@ -104,15 +105,17 @@
   .kpis{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}
   .kpi{
     background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-sm);
-    padding:9px 10px;min-width:0;
+    padding:10px 8px;min-width:0;text-align:center;
+    display:flex;flex-direction:column;justify-content:center;
   }
   .kpi b{
     display:block;font-family:var(--font-mono);font-size:20px;font-weight:600;
-    line-height:1.1;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    line-height:1.1;letter-spacing:-.03em;white-space:nowrap;
   }
+  #kPer b{font-size:16px}
   .kpi span{
-    display:block;font-size:10px;color:var(--muted);margin-top:3px;
-    letter-spacing:.04em;text-transform:uppercase;
+    display:block;font-size:9.5px;color:var(--muted);margin-top:3px;
+    letter-spacing:.03em;text-transform:uppercase;line-height:1.3;
   }
   #kMax b{color:var(--m2)}
 
@@ -177,6 +180,7 @@
   .lyr:hover{background:var(--panel)}
   .lyr input{accent-color:var(--teal);width:15px;height:15px;cursor:pointer;flex:none;margin:0}
   .lyr .sw{width:13px;height:13px;border-radius:3px;flex:none}
+  .lyr .sw.est{background:#0E0E0E;box-shadow:0 0 0 2px #FFFFFF}
   .lyr .sw.ln{width:15px;height:2px;border-radius:1px;background:#111;box-shadow:0 0 0 2.5px #C9D4DE}
   .lyr .sw.ln.thin{height:1px}
   .lyr .nm{font-size:var(--fs-md);flex:1;min-width:0}
@@ -189,46 +193,20 @@
   /* --- legenda --- */
   .lg{display:flex;align-items:center;gap:10px;padding:4px 0;font-size:var(--fs-sm)}
   .lg .dot{border-radius:50%;flex:none;border:1.5px solid rgba(255,255,255,.6)}
-  .lg .tri{width:0;height:0;flex:none;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:11px solid var(--teal)}
+  .lg .tri{flex:none;display:block}
   .lg .ln{width:20px;height:2px;flex:none;background:#111;border-radius:1px;box-shadow:0 0 0 3px #C9D4DE}
   .lg .ln.thin{height:1px}
   .lg small{font-family:var(--font-mono);color:var(--dim);margin-left:auto;font-size:10px}
 
   /* --- exportar --- */
-  .btn{
-    display:flex;align-items:center;justify-content:center;gap:7px;width:100%;
-    padding:9px 10px;font-size:var(--fs-sm);font-weight:600;color:var(--text);
-    background:var(--panel);border:1px solid var(--line2);border-radius:var(--radius-sm);
-    cursor:pointer;transition:border-color .18s var(--ease),background .18s var(--ease);
-  }
-  .btn:hover{border-color:var(--teal);background:var(--panel2)}
-  .btn:disabled{opacity:.45;cursor:not-allowed;border-color:var(--line)}
-  .btn svg{flex:none}
-  .btn-row{display:flex;gap:var(--gap)}
-  .hint{font-size:10.5px;color:var(--dim);line-height:1.45;margin-top:8px}
 
   /* --- créditos --- */
-  details.cred{border-bottom:1px solid var(--line)}
-  details.cred > summary{
-    padding:12px var(--pad);cursor:pointer;list-style:none;
-    font-family:var(--font-display);font-size:10.5px;font-weight:600;
-    letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
-    display:flex;align-items:center;justify-content:space-between;
-    transition:color .18s var(--ease);
-  }
-  details.cred > summary:hover{color:var(--text)}
-  details.cred > summary::-webkit-details-marker{display:none}
-  details.cred > summary::after{
-    content:"";width:7px;height:7px;border-right:1.5px solid currentColor;
-    border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px);
-    transition:transform .2s var(--ease);
-  }
-  details.cred[open] > summary::after{transform:rotate(-135deg) translateY(-2px)}
-  .cred-body{padding:0 var(--pad) 14px}
   .dev strong{display:block;font-size:var(--fs-md);font-weight:600;margin-bottom:5px}
   .dev span{display:block;font-size:11px;line-height:1.5;color:var(--muted)}
   .dev span + span{margin-top:3px}
   .src{font-size:10.5px;line-height:1.55;color:var(--dim);margin-top:11px;padding-top:11px;border-top:1px solid var(--line)}
+  .dev .ano{margin-top:7px;font-family:var(--font-mono);font-size:10.5px;color:var(--dim);letter-spacing:.04em}
+  .cred-sec{border-bottom:none}
 
   /* ============ MAPA ============ */
   #mapwrap{flex:1;position:relative;min-width:0}
@@ -280,10 +258,7 @@
     border-radius:50%;border:2px solid var(--m4);animation:pulse 2.6s ease-out infinite;
   }
   @keyframes pulse{0%{transform:scale(.5);opacity:.9}70%,100%{transform:scale(3.4);opacity:0}}
-  .station-icon{
-    width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;
-    border-bottom:12px solid var(--teal);filter:drop-shadow(0 1px 2px rgba(0,0,0,.65));
-  }
+  .station-icon{filter:drop-shadow(0 1px 2px rgba(0,0,0,.55))}
 
   /* --- overlays do mapa --- */
   #coords{
@@ -345,6 +320,7 @@
   }
   @media (max-width:420px){
     :root{--sidebar-w:min(86vw,330px);--pad:12px}
+    .brand-full{font-size:10.5px}
     .brand h1{font-size:25px}
     .kpi b{font-size:18px}
   }
@@ -364,9 +340,9 @@
       <button id="closeBtn" aria-label="Fechar painel">
         <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       </button>
-      <div class="brand-eyebrow">WebGIS · Monitoramento Sísmico</div>
-      <h1>LAMES</h1>
-      <div class="brand-full">Laboratório Alagoano de Monitoramento Sísmico</div>
+      <div class="brand-eyebrow">Monitoramento Sísmico</div>
+      <h1>LAMSIS<span class="uf">- AL</span></h1>
+      <div class="brand-full">Laboratório de Monitoramento Sismológico de Alagoas</div>
       <svg class="seismo" viewBox="0 0 280 34" aria-hidden="true" preserveAspectRatio="none">
         <path class="base" d="M2 18 H278"/>
         <path class="spike" d="M2 18 H70 l3 -4 l3 6 l3 -10 l3 15 l3 -21 l3 24 l3 -18 l3 13 l3 -8 l3 4 l3 -2 l4 1 H150 l3 -2 l3 4 l3 -6 l3 7 l3 -4 l3 2 H210 l3 -1 l3 2 H278"/>
@@ -374,13 +350,28 @@
       </svg>
     </div>
 
+    <!-- MAPA BASE -->
+    <section class="panel">
+      <div class="panel-head"><h2>Mapa base</h2></div>
+      <div class="seg" id="segBase" role="group" aria-label="Mapa base">
+        <button type="button" data-base="osm" aria-pressed="true">Clássico</button>
+        <button type="button" data-base="sat" aria-pressed="false">Satélite</button>
+        <button type="button" data-base="relevo" aria-pressed="false">Relevo</button>
+      </div>
+      <div class="panel-head" style="margin:13px 0 10px"><h2>Enquadramento</h2></div>
+      <div class="seg" id="segZoom" role="group" aria-label="Enquadramento">
+        <button type="button" data-zoom="al">Alagoas</button>
+        <button type="button" data-zoom="ne">Nordeste</button>
+      </div>
+    </section>
+
     <!-- RESUMO -->
     <section class="panel">
       <div class="panel-head"><h2>Resumo</h2></div>
       <div class="kpis" aria-live="polite">
         <div class="kpi" id="kEv"><b>—</b><span>eventos</span></div>
         <div class="kpi" id="kMax"><b>—</b><span>maior mag.</span></div>
-        <div class="kpi" id="kCid"><b>—</b><span>cidades</span></div>
+        <div class="kpi" id="kCid"><b>—</b><span>cidades com registro sísmico</span></div>
         <div class="kpi" id="kPer"><b>—</b><span>período</span></div>
       </div>
       <div class="chart-wrap">
@@ -416,25 +407,9 @@
     <section class="panel">
       <div class="panel-head"><h2>Camadas</h2></div>
       <label class="lyr"><input type="checkbox" id="ckEpicentros" checked> <span class="sw" style="background:var(--m2)"></span> <span class="nm">Epicentros</span> <span class="ct" id="ctEpi"></span></label>
-      <label class="lyr"><input type="checkbox" id="ckEstacoes" checked> <span class="sw" style="background:var(--teal)"></span> <span class="nm">Estações sismográficas</span> <span class="ct" id="ctEst"></span></label>
+      <label class="lyr"><input type="checkbox" id="ckEstacoes" checked> <span class="sw est"></span> <span class="nm">Estações sismográficas</span> <span class="ct" id="ctEst"></span></label>
       <label class="lyr"><input type="checkbox" id="ckMuni" checked> <span class="sw ln thin"></span> <span class="nm">Municípios de Alagoas</span> <span class="ct" id="ctMun"></span></label>
       <label class="lyr"><input type="checkbox" id="ckEstados" checked> <span class="sw ln"></span> <span class="nm">Estados do Nordeste</span> <span class="ct" id="ctUf"></span></label>
-    </section>
-
-    <!-- MAPA BASE -->
-    <section class="panel">
-      <div class="panel-head"><h2>Mapa base</h2></div>
-      <div class="seg" id="segBase" role="group" aria-label="Mapa base">
-        <button type="button" data-base="osm" aria-pressed="true">Clássico</button>
-        <button type="button" data-base="sat" aria-pressed="false">Satélite</button>
-        <button type="button" data-base="relevo" aria-pressed="false">Relevo</button>
-      </div>
-      <div class="panel-head" style="margin:13px 0 10px"><h2>Enquadramento</h2></div>
-      <div class="seg" id="segZoom" role="group" aria-label="Enquadramento">
-        <button type="button" data-zoom="al">Alagoas</button>
-        <button type="button" data-zoom="ne">Nordeste</button>
-        <button type="button" data-zoom="fit">Filtrados</button>
-      </div>
     </section>
 
     <!-- LEGENDA -->
@@ -445,44 +420,27 @@
       <div class="lg"><span class="dot" style="width:15px;height:15px;background:var(--m3)"></span> 3,0 – 3,9 <small>leve</small></div>
       <div class="lg"><span class="dot" style="width:18px;height:18px;background:var(--m4)"></span> ≥ 4,0 <small>moderado</small></div>
       <div class="lg"><span class="dot" style="width:11px;height:11px;background:var(--m0)"></span> Indeterminada <small>???</small></div>
-      <div class="lg"><span class="tri"></span> Estação sismográfica</div>
+      <div class="lg"><svg class="tri" width="15" height="13" viewBox="0 0 17 15" aria-hidden="true"><path d="M8.5 1.4 15.7 13.6H1.3Z" fill="#0E0E0E" stroke="#FFFFFF" stroke-width="1.9" stroke-linejoin="round"/></svg> Estação sismográfica</div>
       <div class="lg"><span class="ln"></span> Limite estadual</div>
       <div class="lg"><span class="ln thin"></span> Limite municipal (AL)</div>
     </section>
 
-    <!-- EXPORTAR -->
-    <section class="panel">
-      <div class="panel-head"><h2>Exportar seleção</h2></div>
-      <div class="btn-row">
-        <button type="button" class="btn" id="btnCsv">
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5v9m0 0L4.5 7M8 10.5 11.5 7M2 12.5v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          CSV
-        </button>
-        <button type="button" class="btn" id="btnGeo">
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5v9m0 0L4.5 7M8 10.5 11.5 7M2 12.5v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          GeoJSON
-        </button>
-      </div>
-      <p class="hint">Exporta apenas os epicentros visíveis com os filtros atuais.</p>
-    </section>
-
     <!-- CRÉDITOS -->
-    <details class="cred">
-      <summary>Desenvolvimento e fontes</summary>
-      <div class="cred-body">
-        <div class="dev">
-          <strong>Willian Macksuel Almeida Melo</strong>
-          <span>Graduado em Geografia pela Universidade Estadual de Alagoas</span>
-          <span>Mestrando em Geografia pela Universidade Federal de Sergipe</span>
-          <span>Núcleo de Pesquisas Agrárias — NUPEA/UNEAL</span>
-        </div>
-        <div class="src">
-          Dados sísmicos e estações: LabSis/UFRN (rede NB).<br>
-          Malhas territoriais: IBGE (geometrias simplificadas para web).<br>
-          Mapas base: OpenStreetMap e Esri.
-        </div>
+    <section class="panel cred-sec">
+      <div class="panel-head"><h2>Desenvolvimento e fontes</h2></div>
+      <div class="dev">
+        <strong>Willian Macksuel Almeida Melo</strong>
+        <span>Graduado em Geografia pela Universidade Estadual de Alagoas</span>
+        <span>Mestrando em Geografia pela Universidade Federal de Sergipe</span>
+        <span>Núcleo de Pesquisas Agrárias — NUPEA/UNEAL</span>
+        <span class="ano">Desenvolvido em 2026</span>
       </div>
-    </details>
+      <div class="src">
+        Dados sísmicos e estações: LabSis/UFRN (rede NB).<br>
+        Malhas territoriais: IBGE (geometrias simplificadas para web).<br>
+        Mapas base: OpenStreetMap e Esri.
+      </div>
+    </section>
   </aside>
 
   <div id="mapwrap">
@@ -575,7 +533,7 @@ DADOS.estacoes.features.forEach(f=>{
   const p = f.properties, [lng,lat] = f.geometry.coordinates;
   L.marker([lat,lng],{
     pane:"pEstacoes", title:`Estação ${p.codigo}`,
-    icon:L.divIcon({className:"", html:'<div class="station-icon"></div>', iconSize:[14,12], iconAnchor:[7,10]})
+    icon:L.divIcon({className:"", html:'<svg width=\"17\" height=\"15\" viewBox=\"0 0 17 15\" class=\"station-icon\"><path d=\"M8.5 1.4 15.7 13.6H1.3Z\" fill=\"#0E0E0E\" stroke=\"#FFFFFF\" stroke-width=\"1.9\" stroke-linejoin=\"round\"/></svg>', iconSize:[17,15], iconAnchor:[8.5,13]})
   })
   .bindTooltip(`Estação <span class="tt-mag">${p.codigo}</span>`,{direction:"top",offset:[0,-10]})
   .bindPopup(`
@@ -694,7 +652,7 @@ function render(){
   document.querySelector("#kEv b").textContent  = visiveis.length;
   document.querySelector("#kMax b").textContent = nums.length ? nums.reduce((a,b)=>Math.max(a,b)).toFixed(1) : "—";
   document.querySelector("#kCid b").textContent = cidades.size;
-  document.querySelector("#kPer b").textContent = a1===a2 ? a1 : `${String(a1).slice(2)}–${String(a2).slice(2)}`;
+  document.querySelector("#kPer b").textContent = a1===a2 ? a1 : `${a1}–${a2}`;
 
   /* estado dos filtros */
   const ativo = magMin>0 || cidade || a1!==anoMin || a2!==anoMax;
@@ -708,8 +666,6 @@ function render(){
     vazio.style.display = "block";
   } else vazio.style.display = "none";
 
-  document.getElementById("btnCsv").disabled = visiveis.length === 0;
-  document.getElementById("btnGeo").disabled = visiveis.length === 0;
 }
 
 rngMag.addEventListener("input", render);
@@ -735,42 +691,6 @@ document.getElementById("segZoom").addEventListener("click", ev=>{
   const b = ev.target.closest("button[data-zoom]"); if(!b) return;
   if(b.dataset.zoom === "al") map.flyToBounds(BOUNDS_AL,{padding:[20,20]});
   else if(b.dataset.zoom === "ne") map.flyToBounds(BOUNDS_NE,{padding:[10,10]});
-  else if(visiveis.length){
-    map.flyToBounds(L.latLngBounds(visiveis.map(e=>[e.lat,e.lng])),{padding:[46,46], maxZoom:12});
-  }
-});
-
-/* ---------- exportação ---------- */
-function baixar(nome, conteudo, tipo){
-  const url = URL.createObjectURL(new Blob([conteudo],{type:tipo}));
-  const a = document.createElement("a");
-  a.href = url; a.download = nome; document.body.appendChild(a); a.click();
-  document.body.removeChild(a); setTimeout(()=>URL.revokeObjectURL(url), 1500);
-}
-function carimbo(){
-  const {cidade,a1,a2} = filtros();
-  return `${cidade ? cidade.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g,"-").toLowerCase()+"_" : ""}${a1}-${a2}`;
-}
-document.getElementById("btnCsv").addEventListener("click", ()=>{
-  const cab = ["data","hora_utc","cidade","uf","magnitude","magnitude_texto","escala","latitude","longitude","fonte"];
-  const linhas = visiveis.map(e=>[
-    e.data, e.hora||"", e.cidade, e.uf,
-    e.magnitude==null?"":e.magnitude, e.mag_txt, e.tipo_mag||"",
-    e.lat, e.lng, e.fonte
-  ].map(v=>{
-    const s = String(v);
-    return /[";\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
-  }).join(";"));
-  baixar(`epicentros_lames_${carimbo()}.csv`, "\ufeff"+[cab.join(";"),...linhas].join("\r\n"), "text/csv;charset=utf-8");
-});
-document.getElementById("btnGeo").addEventListener("click", ()=>{
-  const fc = {type:"FeatureCollection", name:"epicentros_lames_filtrados", features: visiveis.map(e=>({
-    type:"Feature",
-    properties:{data:e.data, ano:e.ano, hora:e.hora, magnitude:e.magnitude, mag_txt:e.mag_txt,
-                tipo_mag:e.tipo_mag, cidade:e.cidade, uf:e.uf, fonte:e.fonte},
-    geometry:{type:"Point", coordinates:[e.lng, e.lat]}
-  }))};
-  baixar(`epicentros_lames_${carimbo()}.geojson`, JSON.stringify(fc), "application/geo+json");
 });
 
 /* ---------- leitura de coordenadas ---------- */
